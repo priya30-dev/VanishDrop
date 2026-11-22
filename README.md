@@ -3,7 +3,7 @@
 Share private files with self-destructing, end-to-end encrypted links. Send files straight to
 nearby laptops over your own Wi-Fi. Collect documents that only you can open.
 
-Computer Network Lab (24B15CS313) PBL project · Kirti Mishra, Priya Singh
+Computer Network Lab (24B15CS313) PBL project ·  Priya Singh
 
 ---
 
