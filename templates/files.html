@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}My files · VanishDrop{% endblock %}
+{% block content %}
+<div class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>My files</h1>
+      <p class="muted">Links and notes you shared from this browser, and what happened to them.</p>
+    </div>
+    <div class="row">
+      <button class="btn btn-ghost" id="notify-btn" hidden>Turn on desktop alerts</button>
+      <a class="btn btn-primary" href="/">Share a file</a>
+    </div>
+  </div>
+
+  <div class="stats" id="stats" hidden>
+    <div class="stat"><strong id="st-live">0</strong><span>Waiting</span></div>
+    <div class="stat"><strong id="st-gone">0</strong><span>Opened and destroyed</span></div>
+    <div class="stat"><strong id="st-other">0</strong><span>Expired, locked or destroyed by you</span></div>
+  </div>
+
+  <div class="two-col wide-left">
+    <div>
+      <div id="file-list" class="stack"></div>
+      <div class="card empty" id="empty" hidden>
+        <h3>Nothing shared yet</h3>
+        <p class="muted">When you share a file or note from this browser, you can track it here and destroy it early.</p>
+        <a class="btn btn-primary" href="/">Share your first file</a>
+      </div>
+    </div>
+    <section class="card">
+      <h2>Activity</h2>
+      <div id="events" class="events"></div>
+      <p class="help" id="events-empty">Downloads, deliveries and new uploads show up here.</p>
+    </section>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/files.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Traffic monitor · VanishDrop{% endblock %}
+{% block content %}
+<div class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>Traffic monitor</h1>
+      <p class="muted">Every packet VanishDrop sends and receives, live: UDP discovery, our encrypted TCP protocol and the web pages. Click any row to see what it means.</p>
+    </div>
+    <div class="row">
+      <button class="btn btn-ghost" id="pause" type="button">Pause</button>
+      <button class="btn btn-quiet" id="clear" type="button">Clear</button>
+    </div>
+  </div>
+
+  <div class="stats mon-stats">
+    <div class="stat"><strong id="c-udp">0</strong><span>UDP datagrams</span></div>
+    <div class="stat"><strong id="c-tcp">0</strong><span>TCP frames (VD1)</span></div>
+    <div class="stat"><strong id="c-http">0</strong><span>HTTP messages</span></div>
+    <div class="stat"><strong id="c-enc">0%</strong><span>of bytes encrypted</span></div>
+  </div>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>Bytes per second, last 60 seconds</h2>
+      <div class="legend" aria-hidden="true">
+        <span><i class="sw sw-udp"></i>UDP</span><span><i class="sw sw-tcp"></i>TCP</span><span><i class="sw sw-http"></i>HTTP</span>
+      </div>
+    </div>
+    <canvas id="chart" class="chart" height="200" role="img" aria-label="Line chart of bytes per second for UDP, TCP and HTTP over the last minute"></canvas>
+    <p class="help" id="rate-line"></p>
+  </section>
+
+  <div class="two-col mon-cols">
+    <section class="card">
+      <div class="card-head">
+        <h2>Packets</h2>
+        <div class="tags" role="group" aria-label="Filter">
+          <button class="tag tag-btn filter active" data-f="all" type="button">All</button>
+          <button class="tag tag-btn filter" data-f="udp" type="button">UDP</button>
+          <button class="tag tag-btn filter" data-f="tcp" type="button">TCP</button>
+          <button class="tag tag-btn filter" data-f="http" type="button">HTTP</button>
+          <button class="tag tag-btn filter" data-f="pcap" type="button">Captured</button>
+        </div>
+      </div>
+      <div class="table-box">
+        <table class="ptable">
+          <thead><tr><th>Time</th><th>Proto</th><th></th><th>What</th><th>Peer</th><th class="num">Bytes</th><th>Lock</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <p class="help" id="rows-empty">Nothing yet. Open Nearby, send a file, or share a link, and the packets appear here. Background page refreshes are hidden.</p>
+    </section>
+
+    <div class="stack">
+      <section class="card" id="detail">
+        <h2>Packet details</h2>
+        <p class="muted" id="d-empty">Click a row to see what that packet is for.</p>
+        <div id="d-body" hidden>
+          <dl class="kv" id="d-kv"></dl>
+          <p id="d-explain"></p>
+          <p class="help">First 32 bytes:</p>
+          <pre class="hexdump" id="d-hex"></pre>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Real packet capture</h2>
+        <p class="muted small">Captures raw TCP and UDP packets on VanishDrop's ports, with SYN/ACK/FIN flags and sequence numbers, like Wireshark.</p>
+        <label class="switch">
+          <input type="checkbox" id="capture">
+          <span class="switch-track" aria-hidden="true"></span>
+          <span>Capture packets</span>
+        </label>
+        <p class="help" id="cap-status"></p>
+      </section>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/monitor.js') }}"></script>
+{% endblock %}

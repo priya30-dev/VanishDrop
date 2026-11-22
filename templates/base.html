@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}VanishDrop{% endblock %}</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="page-{{ page }}">
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="{{ '/' if owner else '#' }}" aria-label="VanishDrop{{ ' home' if owner }}">
+        <svg class="brand-mark" viewBox="0 0 26 26" aria-hidden="true"><rect x="2" y="2" width="10" height="10" rx="2"/><rect x="14" y="2" width="10" height="10" rx="2" class="o6"/><rect x="2" y="14" width="10" height="10" rx="2" class="o35"/><rect x="14" y="14" width="10" height="10" rx="2" class="o12"/></svg>
+        <span>VanishDrop</span>
+      </a>
+      {% if owner %}
+      <nav class="nav" aria-label="Main">
+        <a href="/" {% if page == 'share' %}aria-current="page"{% endif %}>Share</a>
+        <a href="/notes" {% if page == 'notes' %}aria-current="page"{% endif %}>Notes</a>
+        <a href="/nearby" {% if page == 'nearby' %}aria-current="page"{% endif %}>Nearby</a>
+        <a href="/chat" {% if page == 'chat' %}aria-current="page"{% endif %}>Chat<span class="nav-badge" id="chat-badge" hidden></span></a>
+        <a href="/requests" {% if page == 'requests' %}aria-current="page"{% endif %}>Requests</a>
+        <a href="/files" {% if page == 'files' %}aria-current="page"{% endif %}>My files</a>
+        <a href="/network" {% if page == 'network' %}aria-current="page"{% endif %}>Network</a>
+        <a href="/monitor" {% if page == 'monitor' %}aria-current="page"{% endif %}>Monitor</a>
+        <a href="/server-view" {% if page == 'server' %}aria-current="page"{% endif %}>Server view</a>
+      </nav>
+      <span class="device-chip" id="device-chip" title="This device's name on your network"></span>
+      {% endif %}
+    </header>
+
+    <div id="insecure-banner" class="banner" hidden>
+      <p>This page can't encrypt or decrypt here. Browsers only allow that on <strong>localhost</strong> or <strong>https</strong>.
+        <span id="local-fix">Ask whoever runs VanishDrop to restart it with <code>--https</code>.</span></p>
+      <a class="btn btn-light btn-sm" id="open-local" hidden>Open on this computer</a>
+    </div>
+
+    <main class="main">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="foot">
+     
+      <span>AES-256-GCM · RSA · Diffie-Hellman</span>
+    </footer>
+  </div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/photo.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

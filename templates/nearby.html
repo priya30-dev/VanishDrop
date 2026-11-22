@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Nearby · VanishDrop{% endblock %}
+{% block content %}
+<div class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>Nearby</h1>
+      <p class="muted">Send files straight to devices on the same Wi-Fi or hotspot. No internet, no server in between.</p>
+    </div>
+  </div>
+
+  <div id="pending" class="stack"></div>
+
+  <div class="two-col">
+    <div class="stack">
+      <section class="card">
+        <div class="card-head">
+          <h2>Devices on this network</h2>
+          <span class="scan" aria-hidden="true"></span>
+        </div>
+        <div id="peers" class="list"></div>
+        <p class="help" id="peers-empty">Looking for devices… Make sure VanishDrop is open on the other device and both are on the same Wi-Fi. If Windows asked about the firewall, allow <strong>Private networks</strong>.</p>
+      </section>
+
+      <section class="card">
+        <h2>Transfers</h2>
+        <div id="jobs" class="list"></div>
+        <p class="help" id="jobs-empty">Files you send or receive show up here with live progress.</p>
+      </section>
+
+      <section class="card">
+        <h2>Received files</h2>
+        <div id="inbox" class="list"></div>
+        <p class="help" id="inbox-empty">Nothing received yet.</p>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="card">
+        <h2>This device</h2>
+        <form id="name-form" class="field">
+          <label for="dev-name">Name others see</label>
+          <div class="row">
+            <input id="dev-name" maxlength="40" required>
+            <button class="btn btn-ghost" type="submit">Save</button>
+          </div>
+        </form>
+        <dl class="kv" id="me-kv"></dl>
+        <label class="switch">
+          <input type="checkbox" id="auto-accept">
+          <span class="switch-track" aria-hidden="true"></span>
+          <span>Accept files from friends without asking</span>
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="allow-plain">
+          <span class="switch-track" aria-hidden="true"></span>
+          <span>Lab demo mode: allow unencrypted transfers</span>
+        </label>
+        <p class="help">Lab demo mode is for showing the difference in Wireshark. Leave it off normally. Unencrypted transfers always ask first.</p>
+      </section>
+
+      <section class="card">
+        <h2>Friends</h2>
+        <div id="friends" class="list"></div>
+        <p class="help" id="friends-empty">Pair with a nearby device to add a friend. Friends are checked by their key, so nobody can pretend to be them.</p>
+      </section>
+    </div>
+  </div>
+
+  <dialog id="send-dialog" class="dialog">
+    <form method="dialog" id="send-form" class="stack">
+      <h2>Send to <span id="send-to"></span></h2>
+      <label class="drop small-drop">
+        <input type="file" id="send-file" class="sr-only" required>
+        <span class="file-glyph" aria-hidden="true">+</span>
+        <span class="drop-text"><span class="drop-title" id="send-file-name">Choose a file</span><span class="drop-hint">Up to 4 GB</span></span>
+      </label>
+      <div id="send-privacy" hidden></div>
+      <label class="check"><input type="checkbox" id="send-plain"> Send without encryption (lab demo only)</label>
+      <p class="error" id="send-error" role="alert" hidden></p>
+      <div class="progress" id="send-progress" hidden>
+        <div class="progress-label"><span id="send-progress-text">Preparing…</span><span id="send-progress-pct">0%</span></div>
+        <div class="progress-bar"><span id="send-progress-fill"></span></div>
+      </div>
+      <div class="row end">
+        <button class="btn btn-quiet" value="cancel" formnovalidate>Cancel</button>
+        <button class="btn btn-primary" id="send-go" value="default">Send</button>
+      </div>
+    </form>
+  </dialog>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/nearby.js') }}"></script>
+{% endblock %}

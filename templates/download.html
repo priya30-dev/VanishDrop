@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Someone shared something with you · VanishDrop{% endblock %}
+{% block content %}
+<div class="narrow" id="dl-root" data-link-id="{{ link_id }}">
+  <section class="card" id="dl-loading"><p class="muted">Checking the link…</p></section>
+
+  <section class="card" id="dl-ready" hidden>
+    <p class="muted" id="dl-kicker">Someone shared a file with you</p>
+    <div class="file-tile" id="file-tile">
+      <div class="file-icon" aria-hidden="true"><span id="file-ext">FILE</span></div>
+      <div class="file-meta">
+        <h1 id="file-name">Encrypted file</h1>
+        <p class="muted"><span id="file-size"></span> · encrypted end to end</p>
+      </div>
+      <div class="shards" id="shards" aria-hidden="true"></div>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><p class="fact-l">Disappears in</p><p class="fact-v" id="countdown">—</p></div>
+      <div class="fact"><p class="fact-l" id="left-label">Downloads left</p><p class="fact-v" id="left">—</p></div>
+    </div>
+
+    <form class="field" id="pw-form" hidden>
+      <label for="dl-password">Password</label>
+      <input type="password" id="dl-password" autocomplete="off" placeholder="Ask the sender for it">
+      <button class="btn btn-ghost" type="submit" id="unlock-btn">Unlock</button>
+      <p class="help" id="attempts"></p>
+    </form>
+
+    <p class="error" id="dl-error" role="alert" hidden></p>
+    <button class="btn btn-primary btn-block" id="dl-btn" disabled>Download</button>
+    <div class="progress" id="dl-progress" hidden>
+      <div class="progress-label"><span id="dl-progress-text">Downloading…</span><span id="dl-progress-pct">0%</span></div>
+      <div class="progress-bar"><span id="dl-progress-fill"></span></div>
+    </div>
+    <p class="help center">Decrypted on this device. The server never sees the key.</p>
+  </section>
+
+  <section class="card" id="dl-note" hidden aria-live="polite">
+    <h1>The secret note</h1>
+    <pre class="note-box" id="note-text"></pre>
+    <div id="note-links"></div>
+    <div class="row">
+      <button class="btn btn-light" id="note-copy">Copy</button>
+    </div>
+    <p class="warn" id="note-gone">This note has been destroyed on the server. Copy it now if you need it: once you leave this page it's gone.</p>
+  </section>
+
+  <section class="card" id="dl-done" hidden aria-live="polite">
+    <h1 id="done-title">Downloaded</h1>
+    <p class="muted" id="done-text"></p>
+  </section>
+
+  <section class="card gone" id="dl-gone" hidden>
+    <div class="gone-mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <h1 id="gone-title">This no longer exists</h1>
+    <p class="muted" id="gone-text">It was downloaded or it expired, and its encrypted copy was wiped from the server.</p>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/download.js') }}"></script>
+{% endblock %}

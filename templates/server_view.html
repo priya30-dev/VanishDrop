@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Server view · VanishDrop{% endblock %}
+{% block content %}
+<div class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>What the server stores</h1>
+      <p class="muted">Everything kept on disk for each live link and upload. No file names, no keys, no passwords. Only scrambled bytes.</p>
+    </div>
+    <button class="btn btn-ghost" id="refresh">Refresh</button>
+  </div>
+  <div id="vault" class="stack"></div>
+  <div class="card empty" id="vault-empty" hidden>
+    <h3>Nothing stored right now</h3>
+    <p class="muted">Share a file, then come back to see what the server actually keeps.</p>
+    <a class="btn btn-primary" href="/">Share a file</a>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/server_view.js') }}"></script>
+{% endblock %}

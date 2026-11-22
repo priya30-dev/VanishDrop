@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Secret note' if kind == 'note' else 'Share a file' }} · VanishDrop{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="hero" data-kind="{{ kind }}" id="share-root">
+    <div class="hero-text">
+      {% if kind == 'note' %}
+      <h1>Notes that burn after reading.</h1>
+      <p class="lede">Share a password, OTP or private message. It's encrypted on this computer and destroyed the moment it's read.</p>
+      <ul class="ticks">
+        <li>The key lives only in the link, never on the server</li>
+        <li>Add a password for a second lock</li>
+        <li>Five wrong passwords and it destroys itself</li>
+      </ul>
+      {% else %}
+      <a class="pill-link" href="/requests"><span class="pill-new">New</span>Collect documents with upload requests</a>
+      <h1>Share files that disappear.</h1>
+      <p class="lede">VanishDrop encrypts your file on your own device, hands you a link, and wipes the file the moment it's been downloaded.</p>
+      <div class="hero-actions">
+        <a class="btn btn-ghost" href="/nearby">Send to someone nearby</a>
+        <a class="btn btn-ghost" href="/requests">Request documents</a>
+      </div>
+      <p class="small muted">The receiver opens the link in any phone or laptop browser. Nothing to install.</p>
+      {% endif %}
+    </div>
+
+    <div class="card-frame">
+      <div class="card" id="composer">
+        {% if kind == 'note' %}
+        <label class="field">
+          <span>Your secret note</span>
+          <textarea id="note-text" rows="7" maxlength="20000" placeholder="Wi-Fi password, OTP, bank details…"></textarea>
+        </label>
+        <p class="help" id="note-count">0 / 20,000 characters</p>
+        {% else %}
+        <label class="drop" id="drop">
+          <input type="file" id="file-input" class="sr-only">
+          <span class="file-glyph" id="drop-glyph" aria-hidden="true">+</span>
+          <span class="drop-text">
+            <span class="drop-title" id="drop-title">Drop a file or choose one</span>
+            <span class="drop-hint" id="drop-hint">Any type, up to 200 MB</span>
+          </span>
+        </label>
+        <div id="photo-privacy" hidden></div>
+        {% endif %}
+
+        <div class="grid2">
+          <label class="field"><span>Expires after</span>
+            <select id="expiry">
+              <option value="600">10 minutes</option>
+              <option value="3600" selected>1 hour</option>
+              <option value="86400">1 day</option>
+              <option value="604800">7 days</option>
+            </select>
+          </label>
+          <label class="field"><span>{{ 'Reads allowed' if kind == 'note' else 'Downloads allowed' }}</span>
+            <select id="downloads">
+              <option value="1" selected>1, then destroy</option>
+              {% if kind != 'note' %}
+              <option value="3">3</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              {% endif %}
+            </select>
+          </label>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" id="use-password">
+          <span class="switch-track" aria-hidden="true"></span>
+          <span>Protect with a password</span>
+        </label>
+        <div class="field" id="pw-field" hidden>
+          <label for="password">Password</label>
+          <input type="password" id="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters">
+          <p class="help">Send the password separately, not in the same chat as the link.</p>
+        </div>
+
+        <div class="tags" aria-label="Protection">
+          <span class="tag tag-info">AES-256 on this device</span>
+          <span class="tag tag-ok" id="tag-pw" hidden>Password on</span>
+          <span class="tag">Alert me when opened</span>
+        </div>
+
+        <p class="error" id="share-error" role="alert" hidden></p>
+        <button class="btn btn-primary btn-block" id="share-btn" disabled>Encrypt and share</button>
+        <div class="progress" id="progress" hidden>
+          <div class="progress-label"><span id="progress-text">Encrypting…</span><span id="progress-pct">0%</span></div>
+          <div class="progress-bar"><span id="progress-fill"></span></div>
+        </div>
+      </div>
+
+      <div class="card" id="result" hidden aria-live="polite">
+        <div class="result-head">
+          <span class="lock-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+          <div>
+            <h2>Your link is ready</h2>
+            <p class="muted" id="result-summary"></p>
+          </div>
+        </div>
+        <div class="link-row">
+          <input type="text" id="share-link" readonly aria-label="Share link">
+          <button class="btn btn-light" id="copy-btn">Copy link</button>
+        </div>
+        <p class="warn" id="https-warn" hidden>This link only works on this computer. To share with a phone or another laptop, stop VanishDrop and start it with <code>py app.py --https</code>.</p>
+        <div class="result-grid">
+          <div class="qr-wrap">
+            <img id="qr" class="qr" alt="QR code for the link">
+            <p class="help">Scan with a phone on the same Wi-Fi</p>
+          </div>
+          <div class="stack">
+            <a class="btn btn-ghost" id="wa-btn" target="_blank" rel="noopener noreferrer">Share on WhatsApp</a>
+            <a class="btn btn-ghost" href="/files">Track it in My files</a>
+            <button class="btn btn-quiet" id="again-btn">{{ 'Write another note' if kind == 'note' else 'Share another file' }}</button>
+            <p class="warn" id="pw-note" hidden>This link needs the password you set. Send it separately.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% if kind != 'note' %}
+  <section class="band">
+    <h2 class="section-title">Share it, protect it, prove it.</h2>
+    <div class="groups">
+      <article class="group">
+        <div class="group-head"><span class="sq sq-blue"></span><h3>Share</h3></div>
+        <div class="group-item"><p class="gi-t">Self-destructing links</p><p class="gi-b">Set downloads and expiry. Then the file is gone.</p></div>
+        <div class="group-item"><p class="gi-t">Nearby send</p><p class="gi-b">Send to a laptop on the same Wi-Fi, even offline.</p></div>
+        <div class="group-item"><p class="gi-t">Upload requests</p><p class="gi-b">Collect documents from a class. Only you can open them.</p></div>
+      </article>
+      <article class="group">
+        <div class="group-head"><span class="sq sq-green"></span><h3>Protect</h3></div>
+        <div class="group-item"><p class="gi-t">Secret notes</p><p class="gi-b">Passwords and OTPs that disappear once read.</p></div>
+        <div class="group-item"><p class="gi-t">Lockout on guessing</p><p class="gi-b">Five wrong passwords and the link destroys itself.</p></div>
+        <div class="group-item"><p class="gi-t">Send to a friend</p><p class="gi-b">Pair once with a Diffie-Hellman key exchange.</p></div>
+      </article>
+      <article class="group">
+        <div class="group-head"><span class="sq sq-violet"></span><h3>Prove</h3></div>
+        <div class="group-item"><p class="gi-t">Verified sender</p><p class="gi-b">RSA signatures show who sent a file and that nothing changed.</p></div>
+        <div class="group-item"><p class="gi-t">Safety code</p><p class="gi-b">Six digits you both compare to rule out a man in the middle.</p></div>
+        <div class="group-item"><p class="gi-t">Delivery alerts</p><p class="gi-b">Know when your file was opened and destroyed.</p></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="steps">
+    <div class="step"><p class="step-n">Step 1</p><h3>Drop your file</h3><p class="muted">It's locked on your device with a key only your link holds.</p></div>
+    <div class="step"><p class="step-n">Step 2</p><h3>Send the link</h3><p class="muted">Paste it in WhatsApp, or let them scan the QR code.</p></div>
+    <div class="step"><p class="step-n">Step 3</p><h3>It's wiped</h3><p class="muted">After the last download, the server overwrites and deletes it.</p></div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/qrcode.js') }}"></script>
+<script src="{{ url_for('static', filename='js/share.js') }}"></script>
+{% endblock %}

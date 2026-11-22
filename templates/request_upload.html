@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Upload a file · VanishDrop{% endblock %}
+{% block content %}
+<div class="narrow" id="up-root" data-req-id="{{ req_id }}">
+  <section class="card" id="up-loading"><p class="muted">Opening the request…</p></section>
+
+  <form class="card" id="up-form" hidden>
+    <p class="muted"><span id="up-owner"></span> is asking for</p>
+    <h1 id="up-title"></h1>
+    <div class="facts">
+      <div class="fact"><p class="fact-l">Closes in</p><p class="fact-v" id="up-countdown">—</p></div>
+      <div class="fact"><p class="fact-l">Check code</p><p class="fact-v mono" id="up-code">—</p></div>
+    </div>
+    <p class="help">Only upload if this check code matches the one <span id="up-owner2"></span> shared with you.</p>
+    <label class="field"><span>Your name</span>
+      <input id="up-name" maxlength="60" required placeholder="So they know who sent it">
+    </label>
+    <label class="drop small-drop">
+      <input type="file" id="up-file" class="sr-only" required>
+      <span class="file-glyph" aria-hidden="true">+</span>
+      <span class="drop-text"><span class="drop-title" id="up-file-name">Choose a file</span><span class="drop-hint">Up to 100 MB</span></span>
+    </label>
+    <div id="up-privacy" hidden></div>
+    <p class="error" id="up-error" role="alert" hidden></p>
+    <button class="btn btn-primary btn-block" id="up-btn" type="submit">Encrypt and upload</button>
+    <div class="progress" id="up-progress" hidden>
+      <div class="progress-label"><span id="up-progress-text">Encrypting…</span><span id="up-progress-pct">0%</span></div>
+      <div class="progress-bar"><span id="up-progress-fill"></span></div>
+    </div>
+    <p class="help center">Locked on this device with their public key. Not even the server can open it.</p>
+  </form>
+
+  <section class="card" id="up-done" hidden aria-live="polite">
+    <h1>Uploaded</h1>
+    <p class="muted" id="up-done-text"></p>
+    <button class="btn btn-ghost" id="up-another">Upload another file</button>
+  </section>
+
+  <section class="card gone" id="up-closed" hidden>
+    <h1 id="up-closed-title">This request is closed</h1>
+    <p class="muted" id="up-closed-text">Its deadline passed or it has all the uploads it needs. Ask the person who sent it for a new link.</p>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/request_upload.js') }}"></script>
+{% endblock %}

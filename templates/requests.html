@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Upload requests · VanishDrop{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Collect documents. Only you can open them.</h1>
+      <p class="lede">Make a link like “Upload your Aadhaar for the scholarship form”. Everyone uploads through it, each file is locked with your public key, and only this browser holds the private key.</p>
+      <ul class="ticks">
+        <li>RSA-OAEP + AES-256: the way PGP and HTTPS work</li>
+        <li>Share the check code so people know the link is really yours</li>
+        <li>Files are wiped from the server after you download them</li>
+      </ul>
+    </div>
+    <div class="card-frame">
+      <form class="card" id="req-form">
+        <label class="field"><span>What are you collecting?</span>
+          <input id="req-title" maxlength="80" required placeholder="Aadhaar copies for the scholarship form">
+        </label>
+        <div class="grid2">
+          <label class="field"><span>Deadline</span>
+            <select id="req-expiry"><option value="86400">1 day</option><option value="259200" selected>3 days</option><option value="604800">7 days</option></select>
+          </label>
+          <label class="field"><span>Uploads allowed</span>
+            <select id="req-max"><option value="10">10</option><option value="30">30</option><option value="60" selected>60</option><option value="100">100</option></select>
+          </label>
+        </div>
+        <p class="error" id="req-error" role="alert" hidden></p>
+        <button class="btn btn-primary btn-block" id="req-btn" type="submit">Create upload link</button>
+      </form>
+      <div class="card" id="req-result" hidden>
+        <div class="result-head">
+          <span class="lock-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+          <div><h2>Your upload link is ready</h2><p class="muted">Post it in your class group.</p></div>
+        </div>
+        <div class="link-row">
+          <input type="text" id="req-link" readonly aria-label="Upload link">
+          <button class="btn btn-light" id="req-copy">Copy link</button>
+        </div>
+        <p class="help">Check code for this request: <strong class="mono" id="req-code"></strong>. Tell people to check it matches on the upload page.</p>
+        <p class="warn" id="req-https-warn" hidden>This link only works on this computer. For others to upload, start VanishDrop with <code>py app.py --https</code>.</p>
+        <img id="req-qr" class="qr" alt="QR code for the upload link">
+        <button class="btn btn-quiet" id="req-again">Create another</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="band tight">
+    <h2 class="section-title small-title">Your requests</h2>
+    <div id="req-list" class="stack"></div>
+    <div class="card empty" id="req-empty" hidden>
+      <h3>No requests yet</h3>
+      <p class="muted">Requests you create in this browser appear here, with every file people upload.</p>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/qrcode.js') }}"></script>
+<script src="{{ url_for('static', filename='js/requests.js') }}"></script>
+{% endblock %}

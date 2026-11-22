@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Chat · VanishDrop{% endblock %}
+{% block content %}
+<div class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>Chat</h1>
+      <p class="muted">End-to-end encrypted messages with your friends on the same network. Every message is signed, and can disappear on its own.</p>
+    </div>
+  </div>
+
+  <div class="chat-layout">
+    <section class="card chat-friends">
+      <h2>Friends</h2>
+      <div id="friend-list" class="list"></div>
+      <p class="help" id="no-friends" hidden>No friends yet. Go to <a href="/nearby">Nearby</a>, pair with a device and compare the safety code. Then you can chat here.</p>
+    </section>
+
+    <section class="card chat-main">
+      <div id="chat-empty" class="chat-empty">
+        <h3>Pick a friend to start chatting</h3>
+        <p class="muted">Messages travel straight to their device over your Wi-Fi, encrypted with a fresh Diffie-Hellman key each time. No server in between.</p>
+      </div>
+
+      <div id="chat-open" class="chat-open" hidden>
+        <div class="chat-head">
+          <div class="avatar friend" id="chat-avatar"></div>
+          <div class="item-main">
+            <p class="item-title" id="chat-name"></p>
+            <p class="item-sub" id="chat-status"></p>
+          </div>
+          <a class="btn btn-sm btn-ghost" href="/nearby">Send a file</a>
+          <button class="btn btn-sm btn-danger" id="chat-clear" type="button">Clear chat</button>
+        </div>
+
+        <div class="messages" id="messages" aria-live="polite"></div>
+
+        <form class="composer" id="composer">
+          <label class="sr-only" for="msg">Message</label>
+          <textarea id="msg" rows="2" maxlength="4000" placeholder="Write a message…"></textarea>
+          <div class="composer-row">
+            <label class="field inline-field"><span>Disappears after</span>
+              <select id="ttl">
+                <option value="60">1 minute</option>
+                <option value="3600" selected>1 hour</option>
+                <option value="86400">1 day</option>
+                <option value="604800">7 days</option>
+                <option value="0">Never</option>
+              </select>
+            </label>
+            <span class="help" id="msg-count">0 / 4,000</span>
+            <button class="btn btn-primary" id="send" type="submit">Send</button>
+          </div>
+          <p class="error" id="chat-error" role="alert" hidden></p>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}

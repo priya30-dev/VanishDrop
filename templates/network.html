@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Network check · VanishDrop{% endblock %}
+{% block content %}
+<div class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>Network check</h1>
+      <p class="muted">Run the standard networking commands from here and see what they say about your Wi-Fi, your router and VanishDrop's connections.</p>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="stack">
+      <section class="card">
+        <h2>Run a command</h2>
+        <div class="tool-grid" role="group" aria-label="Commands">
+          <button class="tool" data-tool="ipconfig" type="button"><span class="tool-name" data-win="ipconfig /all" data-nix="ip addr">ipconfig</span><span class="tool-sub">Your IP, mask, gateway, DNS</span></button>
+          <button class="tool" data-tool="ping" data-needs-target="1" type="button"><span class="tool-name" data-win="ping" data-nix="ping">ping</span><span class="tool-sub">Is a device reachable? How fast?</span></button>
+          <button class="tool" data-tool="traceroute" data-needs-target="1" type="button"><span class="tool-name" data-win="tracert" data-nix="traceroute">tracert</span><span class="tool-sub">Every router on the way</span></button>
+          <button class="tool" data-tool="nslookup" data-needs-target="1" type="button"><span class="tool-name" data-win="nslookup" data-nix="nslookup">nslookup</span><span class="tool-sub">Turn a name into an IP (DNS)</span></button>
+          <button class="tool" data-tool="netstat" type="button"><span class="tool-name" data-win="netstat -ano" data-nix="ss -tulpn">netstat</span><span class="tool-sub">VanishDrop's open ports</span></button>
+          <button class="tool" data-tool="arp" type="button"><span class="tool-name" data-win="arp -a" data-nix="ip neigh">arp</span><span class="tool-sub">Devices your laptop has talked to</span></button>
+          <button class="tool" data-tool="route" type="button"><span class="tool-name" data-win="route print" data-nix="ip route">route</span><span class="tool-sub">Where packets go: the gateway</span></button>
+        </div>
+        <label class="field" id="target-field" hidden>
+          <span>Host name or IP address</span>
+          <input id="target" maxlength="253" placeholder="google.com or 192.168.1.1" autocomplete="off" spellcheck="false">
+        </label>
+        <div class="tags" id="quick-targets" hidden></div>
+        <p class="error" id="nc-error" role="alert" hidden></p>
+        <button class="btn btn-primary btn-block" id="run" disabled>Choose a command</button>
+      </section>
+
+      <section class="card" id="out-card" hidden>
+        <div class="card-head">
+          <h2 id="out-title">Output</h2>
+          <span class="help" id="out-meta"></span>
+        </div>
+        <pre class="hexdump terminal" id="output"></pre>
+        <div class="explain" id="explain"></div>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="card">
+        <h2>This network</h2>
+        <dl class="kv" id="net-kv"></dl>
+        <p class="help">VanishDrop uses <strong>UDP</strong> to find devices (broadcast), <strong>TCP</strong> to send files, and <strong>HTTP or HTTPS</strong> (over TCP) for the web pages.</p>
+      </section>
+      <section class="card">
+        <h2>The devices in between</h2>
+        <div class="list">
+          <div class="item"><div class="item-main"><p class="item-title">Hub</p><p class="item-sub">Repeats every signal to every port. Everyone sees everyone's traffic, which is why encryption matters. Rarely used now.</p></div></div>
+          <div class="item"><div class="item-main"><p class="item-title">Switch</p><p class="item-sub">Learns which MAC address is on which port and sends frames only there. Your Wi-Fi router has one built in. See MAC addresses with <code>arp</code>.</p></div></div>
+          <div class="item"><div class="item-main"><p class="item-title">Router</p><p class="item-sub">Moves packets between networks using IP addresses. <code>tracert</code> lists each router a packet passes.</p></div></div>
+          <div class="item"><div class="item-main"><p class="item-title">Gateway</p><p class="item-sub">The router your laptop sends everything to when the address isn't on your own network. <code>route</code> and <code>ipconfig</code> show it.</p></div></div>
+        </div>
+        <p class="help">Nearby send works without the internet because both laptops are on the same network: the Wi-Fi's switch delivers packets directly, no router hop needed.</p>
+      </section>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/network.js') }}"></script>
+{% endblock %}
